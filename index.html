@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Clínica dental Sonrisa Imperial. Agenda tu cita en menos de un minuto.">
+<style>
+  html { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Sonrisa Imperial</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=Figtree:wght@400;500;600&display=swap">
+<style>
+  /* Layout: una sola pantalla dividida — promesa y horarios a la izquierda, formulario de cita a la derecha; se apila en móvil. */
+  :root {
+    --bg: #f5f7f8;          /* esmalte: blanco frío */
+    --surface: #ffffff;
+    --fg: #141e2b;          /* tinta azul profunda */
+    --muted: #5d6b78;
+    --line: #dbe2e7;
+    --accent: #23436f;      /* azul imperial */
+    --accent-fg: #ffffff;
+    --accent-soft: #e6edf6;
+    --gold: #a8844f;        /* detalle de la corona, uso mínimo */
+    --error: #b23a3a;
+    --font-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+    --font-body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e141b; --surface: #151d27; --fg: #e6ebef; --muted: #95a3b0; --line: #26323e;
+      --accent: #8fb1e3; --accent-fg: #0e141b; --accent-soft: #1c2a3b; --gold: #c9a56c; --error: #f08a8a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e141b; --surface: #151d27; --fg: #e6ebef; --muted: #95a3b0; --line: #26323e;
+    --accent: #8fb1e3; --accent-fg: #0e141b; --accent-soft: #1c2a3b; --gold: #c9a56c; --error: #f08a8a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Encabezado */
+  header .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 22px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--fg);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: 0.01em;
+  }
+  .brand svg { width: 26px; height: 20px; flex: none; }
+  .header-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .header-link:hover { border-color: var(--accent); }
+
+  /* Contenido principal */
+  main .wrap {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-block: 24px 64px;
+  }
+  @media (min-width: 900px) {
+    main .wrap { grid-template-columns: 1fr 460px; gap: 72px; align-items: start; padding-block: 56px 96px; }
+  }
+  .intro { min-width: 0; }
+  .eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.3rem, 5.2vw, 3.7rem);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    margin: 0 0 22px;
+    text-wrap: balance;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lead {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 44ch;
+    margin: 0 0 40px;
+  }
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    max-width: 460px;
+    border-top: 1px solid var(--line);
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 16px;
+    padding-block: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dt { font-size: 0.85rem; color: var(--muted); }
+  .facts dd { margin: 0; font-weight: 500; font-variant-numeric: tabular-nums; }
+  @media (max-width: 420px) {
+    .facts div { grid-template-columns: 1fr; gap: 2px; }
+  }
+
+  /* Tarjeta de cita */
+  .booking {
+    min-width: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: 0 1px 2px rgb(20 30 43 / 0.04), 0 12px 32px -12px rgb(20 30 43 / 0.12);
+  }
+  @media (max-width: 420px) { .booking { padding: 22px 18px; } }
+  .booking h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.6rem;
+    margin: 0 0 4px;
+  }
+  .booking .sub { color: var(--muted); font-size: 0.92rem; margin: 0 0 24px; }
+
+  form { display: grid; gap: 18px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+  .field { display: grid; gap: 6px; min-width: 0; }
+  label, .label {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .optional { font-weight: 400; color: var(--muted); }
+  input[type="text"], input[type="tel"], input[type="date"], select, textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 0.98rem;
+    color: var(--fg);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 12px;
+    min-height: 46px;
+  }
+  textarea { resize: vertical; min-height: 76px; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+  .field.invalid input, .field.invalid select { border-color: var(--error); }
+  .err { font-size: 0.8rem; color: var(--error); min-height: 0; }
+  .err:empty { display: none; }
+
+  /* Horarios */
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 8px;
+  }
+  .slot input { position: absolute; opacity: 0; pointer-events: none; }
+  .slot span {
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    padding: 9px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .slot span:hover { border-color: var(--accent); }
+  .slot input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+  .slot input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .slot input:disabled + span { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+  .slots-note {
+    font-size: 0.88rem;
+    color: var(--muted);
+    background: var(--accent-soft);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+    padding: 14px 20px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-fg);
+    cursor: pointer;
+    text-decoration: none;
+    transition: filter .15s;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .btn.ghost { background: transparent; color: var(--accent); }
+  .btn.block { width: 100%; }
+
+  /* Confirmación */
+  .done { display: grid; gap: 20px; }
+  .done .check {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .summary { margin: 0; display: grid; border-top: 1px solid var(--line); }
+  .summary div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--line); }
+  .summary dt { font-size: 0.85rem; color: var(--muted); }
+  .summary dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+  .summary dd::first-letter { text-transform: uppercase; }
+  .actions { display: grid; gap: 10px; }
+  .hint { font-size: 0.85rem; color: var(--muted); margin: 0; }
+  .copy-fallback { width: 100%; font: inherit; font-size: 0.85rem; min-height: 120px; }
+
+  footer .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 24px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#agendar" aria-label="Sonrisa Imperial">
+      <svg viewBox="0 0 26 20" fill="none" aria-hidden="true">
+        <path d="M2 17.5h22M3 15 1.5 5l6.5 5L13 2l5 8 6.5-5L23 15H3Z" stroke="var(--gold)" stroke-width="1.6" stroke-linejoin="round" fill="none"/>
+      </svg>
+      Sonrisa Imperial
+    </a>
+    <a class="header-link" href="#agendar">Agendar cita</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="intro">
+      <p class="eyebrow">Clínica dental</p>
+      <h1>Una sonrisa sana empieza con <em>una cita.</em></h1>
+      <p class="lead">Elige el motivo, el día y la hora que mejor te queden. Te confirmamos la cita por WhatsApp.</p>
+      <dl class="facts">
+        <div><dt>Lunes a viernes</dt><dd>8:00 – 19:00</dd></div>
+        <div><dt>Sábados</dt><dd>9:00 – 14:00</dd></div>
+        <div><dt>Primera valoración</dt><dd>30 minutos</dd></div>
+        <div><dt>Confirmación</dt><dd>Por WhatsApp, el mismo día</dd></div>
+      </dl>
+    </section>
+
+    <section class="booking" id="agendar" aria-labelledby="booking-title">
+      <div id="step-form">
+        <h2 id="booking-title">Agenda tu cita</h2>
+        <p class="sub">Toma menos de un minuto.</p>
+        <form id="form" novalidate>
+          <div class="field" data-field="nombre">
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" name="nombre" autocomplete="name" required>
+            <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="row">
+            <div class="field" data-field="telefono">
+              <label for="telefono">Teléfono</label>
+              <input type="tel" id="telefono" name="telefono" autocomplete="tel" inputmode="tel" required>
+              <span class="err" aria-live="polite"></span>
+            </div>
+            <div class="field" data-field="motivo">
+              <label for="motivo">Motivo</label>
+              <select id="motivo" name="motivo" required>
+                <option value="">Selecciona…</option>
+                <option>Valoración general</option>
+                <option>Limpieza dental</option>
+                <option>Blanqueamiento</option>
+                <option>Ortodoncia</option>
+                <option>Coronas y carillas</option>
+                <option>Dolor o urgencia</option>
+              </select>
+              <span class="err" aria-live="polite"></span>
+            </div>
+          </div>
+          <div class="field" data-field="fecha">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" required>
+            <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="field" data-field="hora">
+            <span class="label" id="hora-label">Hora</span>
+            <div class="slots" id="slots" role="radiogroup" aria-labelledby="hora-label"></div>
+            <p class="slots-note" id="slots-note" hidden></p>
+            <span class="err" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="notas">Notas <span class="optional">(opcional)</span></label>
+            <textarea id="notas" name="notas" placeholder="Cuéntanos si tienes dolor, sensibilidad o alguna duda."></textarea>
+          </div>
+          <button class="btn block" type="submit">Solicitar cita</button>
+        </form>
+      </div>
+
+      <div id="step-done" class="done" hidden>
+        <div class="check" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="m4 10.5 4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2 tabindex="-1" id="done-title">Revisa tu solicitud</h2>
+          <p class="sub" style="margin:0">Envíanosla por WhatsApp y te confirmamos la cita.</p>
+        </div>
+        <dl class="summary" id="summary"></dl>
+        <div class="actions">
+          <a class="btn block" id="wa-link" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+          <button class="btn ghost block" type="button" id="copy-btn">Copiar mensaje</button>
+          <textarea class="copy-fallback" id="copy-fallback" readonly hidden aria-label="Mensaje de la cita"></textarea>
+          <button class="btn ghost block" type="button" id="edit-btn">Cambiar datos</button>
+        </div>
+        <p class="hint">Si WhatsApp no se abre, copia el mensaje y envíalo al <span id="wa-number"></span>.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Sonrisa Imperial</span>
+    <span>Atención con cita previa</span>
+  </div>
+</footer>
+
+<script>
+  // Número de WhatsApp de la clínica, con código de país y sin signos (ej. 573001234567).
+  const WHATSAPP_NUMBER = "573245894133";
+
+  const SCHEDULE = {
+    weekday: { start: 8 * 60, end: 19 * 60 },  // lunes a viernes
+    saturday: { start: 9 * 60, end: 14 * 60 },
+  };
+  const SLOT_MINUTES = 30;
+
+  const $ = (id) => document.getElementById(id);
+  const form = $("form");
+  const fecha = $("fecha");
+  const slots = $("slots");
+  const slotsNote = $("slots-note");
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const toISO = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseISO = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const fmtTime = (mins) => `${Math.floor(mins / 60)}:${pad(mins % 60)}`;
+  const fmtDate = (s) => parseISO(s).toLocaleDateString("es", { weekday: "long", day: "numeric", month: "long" });
+
+  // Siguiente día hábil como valor inicial
+  const today = new Date();
+  fecha.min = toISO(today);
+  const max = new Date(today); max.setDate(max.getDate() + 90);
+  fecha.max = toISO(max);
+  const start = new Date(today);
+  start.setDate(start.getDate() + 1);
+  if (start.getDay() === 0) start.setDate(start.getDate() + 1);
+  fecha.value = toISO(start);
+
+  function renderSlots() {
+    slots.innerHTML = "";
+    slotsNote.hidden = true;
+    if (!fecha.value) {
+      slotsNote.textContent = "Elige una fecha para ver los horarios disponibles.";
+      slotsNote.hidden = false;
+      return;
+    }
+    const day = parseISO(fecha.value);
+    const dow = day.getDay();
+    if (dow === 0) {
+      slotsNote.textContent = "Los domingos no atendemos. Elige otro día.";
+      slotsNote.hidden = false;
+      return;
+    }
+    const range = dow === 6 ? SCHEDULE.saturday : SCHEDULE.weekday;
+    const isToday = fecha.value === toISO(new Date());
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes() + 60; // al menos una hora de anticipación
+    let available = 0;
+    for (let m = range.start; m + SLOT_MINUTES <= range.end; m += SLOT_MINUTES) {
+      const label = document.createElement("label");
+      label.className = "slot";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "hora";
+      input.id = `hora-${m}`;
+      input.value = fmtTime(m);
+      if (isToday && m < nowMins) input.disabled = true; else available++;
+      const span = document.createElement("span");
+      span.textContent = fmtTime(m);
+      label.append(input, span);
+      slots.append(label);
+    }
+    if (!available) {
+      slots.innerHTML = "";
+      slotsNote.textContent = "Ya no quedan horarios para hoy. Elige otro día.";
+      slotsNote.hidden = false;
+    }
+  }
+
+  function setError(name, msg) {
+    const field = form.querySelector(`[data-field="${name}"]`);
+    field.classList.toggle("invalid", !!msg);
+    field.querySelector(".err").textContent = msg || "";
+  }
+
+  function validate() {
+    const data = Object.fromEntries(new FormData(form));
+    const errors = {
+      nombre: data.nombre.trim().length < 3 ? "Escribe tu nombre completo." : "",
+      telefono: data.telefono.replace(/\D/g, "").length < 7 ? "Escribe un teléfono válido, con al menos 7 dígitos." : "",
+      motivo: !data.motivo ? "Elige el motivo de la consulta." : "",
+      fecha: !data.fecha ? "Elige una fecha."
+        : data.fecha < fecha.min ? "La fecha ya pasó. Elige una a partir de hoy."
+        : parseISO(data.fecha).getDay() === 0 ? "Los domingos no atendemos." : "",
+      hora: !data.hora ? "Elige una hora disponible." : "",
+    };
+    Object.entries(errors).forEach(([k, v]) => setError(k, v));
+    const first = Object.keys(errors).find((k) => errors[k]);
+    return first ? { ok: false, first } : { ok: true, data };
+  }
+
+  function buildMessage(d) {
+    const lines = [
+      "Hola, Sonrisa Imperial. Quiero agendar una cita:",
+      `Nombre: ${d.nombre.trim()}`,
+      `Teléfono: ${d.telefono.trim()}`,
+      `Motivo: ${d.motivo}`,
+      `Fecha: ${fmtDate(d.fecha)}`,
+      `Hora: ${d.hora}`,
+    ];
+    if (d.notas.trim()) lines.push(`Notas: ${d.notas.trim()}`);
+    return lines.join("\n");
+  }
+
+  let message = "";
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const res = validate();
+    if (!res.ok) {
+      const el = res.first === "hora" ? slots.querySelector("input:not(:disabled)") || fecha : $(res.first);
+      el.focus();
+      return;
+    }
+    const d = res.data;
+    message = buildMessage(d);
+    const rows = [
+      ["Nombre", d.nombre.trim()],
+      ["Teléfono", d.telefono.trim()],
+      ["Motivo", d.motivo],
+      ["Fecha", fmtDate(d.fecha)],
+      ["Hora", d.hora],
+    ];
+    if (d.notas.trim()) rows.push(["Notas", d.notas.trim()]);
+    const summary = $("summary");
+    summary.innerHTML = "";
+    rows.forEach(([k, v]) => {
+      const div = document.createElement("div");
+      const dt = document.createElement("dt"); dt.textContent = k;
+      const dd = document.createElement("dd"); dd.textContent = v;
+      div.append(dt, dd);
+      summary.append(div);
+    });
+    $("wa-link").href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    $("copy-fallback").hidden = true;
+    $("copy-btn").textContent = "Copiar mensaje";
+    $("step-form").hidden = true;
+    $("step-done").hidden = false;
+    $("done-title").focus();
+  });
+
+  $("edit-btn").addEventListener("click", () => {
+    $("step-done").hidden = true;
+    $("step-form").hidden = false;
+    $("nombre").focus();
+  });
+
+  $("copy-btn").addEventListener("click", () => {
+    const btn = $("copy-btn");
+    const showFallback = () => {
+      const ta = $("copy-fallback");
+      ta.value = message;
+      ta.hidden = false;
+      ta.select();
+      btn.textContent = "Selecciona y copia el texto";
+    };
+    try {
+      navigator.clipboard.writeText(message).then(() => { btn.textContent = "Mensaje copiado"; }, showFallback);
+    } catch { showFallback(); }
+  });
+
+  fecha.addEventListener("change", () => { renderSlots(); setError("fecha", ""); setError("hora", ""); });
+  slots.addEventListener("change", () => setError("hora", ""));
+  ["nombre", "telefono", "motivo"].forEach((id) => $(id).addEventListener("input", () => setError(id, "")));
+
+  $("wa-number").textContent = "+57 324 589 4133";
+  renderSlots();
+</script>
+
+</body>
+</html>
